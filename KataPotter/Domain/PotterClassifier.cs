@@ -8,19 +8,12 @@ namespace KataPotter.Domain
     {
         const decimal UNIT_PRICE = 8m;
         readonly List<ISBN> potterISBNs;
-        readonly List<ClassificationItem> classification;
+        readonly PotterClassification classification;
 
         public PotterClassifier()
         {
             potterISBNs = new List<ISBN>() { new ISBN("111"), new ISBN("222"), new ISBN("333"), new ISBN("444"), new ISBN("555") };
-            classification = new List<ClassificationItem>()
-            {
-                new ClassificationItem("111"),
-                new ClassificationItem("222"),
-                new ClassificationItem("333"),
-                new ClassificationItem("444"),
-                new ClassificationItem("555")
-            };
+            classification = new PotterClassification();
         }
 
         public bool AddItem(Book book)
@@ -30,15 +23,19 @@ namespace KataPotter.Domain
                 return false;
             }
 
-            var item = classification.Where(citem => book.MatchBy(citem.ISBN)).First();
-            item.IncrementCount();
+            classification.AddItem(book);
             return true;
         }
 
         public Money GetBestPrice()
         {
+            GetBestPrice(classification);
+        }
+
+        public Money GetBestPrice(PotterClassification classification)
+        {
             var totalPrice = new Money(0);
-            var orderedClassification = classification.OrderBy(i => i.Count).ToList();
+            var orderedClassification = classification.GetOrdered();
             if (orderedClassification.Any(c => c.Count > 0))
             {
                 // Con el primer elemento, sabemos cuantas colecciones de 5 libros tenemos
