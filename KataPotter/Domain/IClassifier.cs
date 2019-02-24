@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using KataPotter.Model;
 
-namespace KataPotter
+namespace KataPotter.Domain
 {
     public interface IClassifier
     {

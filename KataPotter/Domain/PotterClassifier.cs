@@ -1,20 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using KataPotter.Model;
+using System.Collections.Generic;
 using System.Linq;
 
-namespace KataPotter
+namespace KataPotter.Domain
 {
     public class PotterClassifier : IClassifier
     {
         const decimal UNIT_PRICE = 8m;
-        readonly List<ISBN> potterISBNs = new List<ISBN>() { new ISBN("111"), new ISBN("222"), new ISBN("333"), new ISBN("444"), new ISBN("555") };
-        readonly List<ClassificationItem> classification = new List<ClassificationItem>()
+        readonly List<ISBN> potterISBNs;
+        readonly List<ClassificationItem> classification;
+
+        public PotterClassifier()
         {
-            new ClassificationItem("111"),
-            new ClassificationItem("222"),
-            new ClassificationItem("333"),
-            new ClassificationItem("444"),
-            new ClassificationItem("555")
-        };
+            potterISBNs = new List<ISBN>() { new ISBN("111"), new ISBN("222"), new ISBN("333"), new ISBN("444"), new ISBN("555") };
+            classification = new List<ClassificationItem>()
+            {
+                new ClassificationItem("111"),
+                new ClassificationItem("222"),
+                new ClassificationItem("333"),
+                new ClassificationItem("444"),
+                new ClassificationItem("555")
+            };
+        }
 
         public bool AddItem(Book book)
         {
@@ -23,14 +30,9 @@ namespace KataPotter
                 return false;
             }
 
-            var item = classification.Where(b => book.IsMyISBN(b.GetISBN())).FirstOrDefault();
-            if (item != null)
-            {
-                item.IncrementCount();
-                return true;
-            }
-
-            return false;
+            var item = classification.Where(citem => book.MatchBy(citem.ISBN)).First();
+            item.IncrementCount();
+            return true;
         }
 
         public Money GetBestPrice()
@@ -40,15 +42,15 @@ namespace KataPotter
             if (orderedClassification.Any(c => c.Count > 0))
             {
                 // Con el primer elemento, sabemos cuantas colecciones de 5 libros tenemos
-                totalPrice += GetPriceForColectionOf(5, orderedClassification[0].Count);
+                totalPrice += GetPriceForCollectionOf(5, orderedClassification[0].Count);
                 // Con el segundo elemento, sabemos cuantas colecciones de 4 libros tenemos, restando las que ya hemos usado con el anterior
-                totalPrice += GetPriceForColectionOf(4, orderedClassification[1].Count - orderedClassification[0].Count);
+                totalPrice += GetPriceForCollectionOf(4, orderedClassification[1].Count - orderedClassification[0].Count);
                 // Con el tercer elemento, sabemos cuantas colecciones de 3 libros tenemos, restando las que ya hemos usado con el anterior
-                totalPrice += GetPriceForColectionOf(3, orderedClassification[2].Count - orderedClassification[1].Count);
+                totalPrice += GetPriceForCollectionOf(3, orderedClassification[2].Count - orderedClassification[1].Count);
                 // Con el cuarto elemento, sabemos cuantas colecciones de 2 libros tenemos, restando las que ya hemos usado con el anterior
-                totalPrice += GetPriceForColectionOf(2, orderedClassification[3].Count - orderedClassification[2].Count);
+                totalPrice += GetPriceForCollectionOf(2, orderedClassification[3].Count - orderedClassification[2].Count);
                 // Con el quinto elemento, sabemos cuantos libros sueltos tenemos, restando lo que ya hemos usado con el anterior
-                totalPrice += GetPriceForColectionOf(1, orderedClassification[4].Count - orderedClassification[3].Count);
+                totalPrice += GetPriceForCollectionOf(1, orderedClassification[4].Count - orderedClassification[3].Count);
 
                 return totalPrice;
             }
@@ -56,11 +58,11 @@ namespace KataPotter
             return new Money(0);
         }
 
-        Money GetPriceForColectionOf(int books, int colections)
+        Money GetPriceForCollectionOf(int books, int collections)
         {
             var price = new Money(UNIT_PRICE * books);
             price = price.ApplyDiscount(GetDiscountFor(books));
-            price *= colections;
+            price *= collections;
             return price;
         }
 
@@ -76,7 +78,7 @@ namespace KataPotter
         
         bool IsPotterBook(Book book)
         {
-            return potterISBNs.Any(isbn => book.IsMyISBN(isbn));
+            return potterISBNs.Any(isbn => book.MatchBy(isbn));
         }
     }
 }

@@ -1,7 +1,8 @@
-﻿using System;
+﻿using KataPotter.Model;
+using System;
 using System.Collections.Generic;
 
-namespace KataPotter
+namespace KataPotter.Domain
 {
     public class ShoppingCart
     {

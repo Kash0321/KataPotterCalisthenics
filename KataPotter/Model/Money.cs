@@ -1,6 +1,8 @@
-﻿namespace KataPotter
+﻿using System;
+
+namespace KataPotter.Model
 {
-    public class Money
+    public class Money : IEquatable<Money>
     {
         readonly decimal amount;
 
@@ -26,11 +28,19 @@
 
         public static bool operator ==(Money a, Money b)
         {
+            if (a is null && b is null) return true;
+            if (a is null && !(b is null)) return false;
+            if (!(a is null) && b is null) return false;
+
             return a.amount == b.amount;
         }
 
         public static bool operator !=(Money a, Money b)
         {
+            if (a is null && b is null) return false;
+            if (a is null && !(b is null)) return true;
+            if (!(a is null) && b is null) return true;
+
             return a.amount != b.amount;
         }
 
@@ -41,17 +51,17 @@
 
         public override bool Equals(object obj)
         {
-            if (obj == null || GetType() != obj.GetType())
-            {
-                return false;
-            }
+            return Equals(obj as Money);
+        }
 
-            return this == ((Money)obj);
+        public bool Equals(Money other)
+        {
+            return other != null && this == other;
         }
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            return -1658239311 + amount.GetHashCode();
         }
     }
 }

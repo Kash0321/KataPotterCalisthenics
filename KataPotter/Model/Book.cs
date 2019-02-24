@@ -1,4 +1,4 @@
-﻿namespace KataPotter
+﻿namespace KataPotter.Model
 {
     public class Book
     {
@@ -9,7 +9,7 @@
             ISBN = new ISBN(ISBNCode);
         }
 
-        public bool IsMyISBN(ISBN ISBN)
+        public bool MatchBy(ISBN ISBN)
         {
             return this.ISBN == ISBN;
         }
