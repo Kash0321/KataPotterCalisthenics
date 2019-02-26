@@ -5,10 +5,10 @@
         public ISBN ISBN { get; private set; }
         public int Count { get; private set; }
 
-        public ClassificationItem(string ISBNCode)
+        public ClassificationItem(string ISBNCode, int count = 0)
         {
             ISBN = new ISBN(ISBNCode);
-            Count = 0;
+            Count = count;
         }
 
         public void IncrementCount(int increment = 1)
