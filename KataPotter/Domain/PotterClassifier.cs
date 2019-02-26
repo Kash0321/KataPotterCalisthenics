@@ -29,28 +29,28 @@ namespace KataPotter.Domain
 
         public Money GetBestPrice()
         {
-            GetBestPrice(classification);
+            return GetBestPrice(classification);
         }
 
-        public Money GetBestPrice(PotterClassification classification)
+        Money GetBestPrice(PotterClassification classification)
         {
-            var totalPrice = new Money(0);
-            var orderedClassification = classification.GetOrdered();
-            if (orderedClassification.Any(c => c.Count > 0))
-            {
-                // Con el primer elemento, sabemos cuantas colecciones de 5 libros tenemos
-                totalPrice += GetPriceForCollectionOf(5, orderedClassification[0].Count);
-                // Con el segundo elemento, sabemos cuantas colecciones de 4 libros tenemos, restando las que ya hemos usado con el anterior
-                totalPrice += GetPriceForCollectionOf(4, orderedClassification[1].Count - orderedClassification[0].Count);
-                // Con el tercer elemento, sabemos cuantas colecciones de 3 libros tenemos, restando las que ya hemos usado con el anterior
-                totalPrice += GetPriceForCollectionOf(3, orderedClassification[2].Count - orderedClassification[1].Count);
-                // Con el cuarto elemento, sabemos cuantas colecciones de 2 libros tenemos, restando las que ya hemos usado con el anterior
-                totalPrice += GetPriceForCollectionOf(2, orderedClassification[3].Count - orderedClassification[2].Count);
-                // Con el quinto elemento, sabemos cuantos libros sueltos tenemos, restando lo que ya hemos usado con el anterior
-                totalPrice += GetPriceForCollectionOf(1, orderedClassification[4].Count - orderedClassification[3].Count);
+            //var totalPrice = new Money(0);
+            //var orderedClassification = classification.GetOrdered();
+            //if (orderedClassification.Any(c => c.Count > 0))
+            //{
+            //    // Con el primer elemento, sabemos cuantas colecciones de 5 libros tenemos
+            //    totalPrice += GetPriceForCollectionOf(5, orderedClassification[0].Count);
+            //    // Con el segundo elemento, sabemos cuantas colecciones de 4 libros tenemos, restando las que ya hemos usado con el anterior
+            //    totalPrice += GetPriceForCollectionOf(4, orderedClassification[1].Count - orderedClassification[0].Count);
+            //    // Con el tercer elemento, sabemos cuantas colecciones de 3 libros tenemos, restando las que ya hemos usado con el anterior
+            //    totalPrice += GetPriceForCollectionOf(3, orderedClassification[2].Count - orderedClassification[1].Count);
+            //    // Con el cuarto elemento, sabemos cuantas colecciones de 2 libros tenemos, restando las que ya hemos usado con el anterior
+            //    totalPrice += GetPriceForCollectionOf(2, orderedClassification[3].Count - orderedClassification[2].Count);
+            //    // Con el quinto elemento, sabemos cuantos libros sueltos tenemos, restando lo que ya hemos usado con el anterior
+            //    totalPrice += GetPriceForCollectionOf(1, orderedClassification[4].Count - orderedClassification[3].Count);
 
-                return totalPrice;
-            }
+            //    return totalPrice;
+            //}
 
             return new Money(0);
         }
