@@ -37,10 +37,36 @@ namespace KataPotter.Domain
             Money result = Money.Zero();
             if (classification.GetItems().Any(i => i.Count > 1))
             {
-                var steppedClassification = classification.StepCaseSet(out PotterClassification extracted);
-                result += GetTrivialSetPrice(extracted.GetBooksCount());
 
-                return result + GetBestPrice(steppedClassification);
+                var prices = new List<Money>();
+                var steppedClassification1 = classification.StepCaseSet(1, out PotterClassification extracted1);
+                if (!steppedClassification1.GetItems().Any(i => i.Count < 0))
+                {
+                    prices.Add(GetBestPrice(steppedClassification1) + GetTrivialSetPrice(extracted1.GetBooksCount()));
+                }
+                var steppedClassification2 = classification.StepCaseSet(2, out PotterClassification extracted2);
+                if (!steppedClassification2.GetItems().Any(i => i.Count < 0))
+                {
+                    prices.Add(GetBestPrice(steppedClassification2) + GetTrivialSetPrice(extracted2.GetBooksCount()));
+                }
+                var steppedClassification3 = classification.StepCaseSet(3, out PotterClassification extracted3);
+                if (!steppedClassification3.GetItems().Any(i => i.Count < 0))
+                {
+                    prices.Add(GetBestPrice(steppedClassification3) + GetTrivialSetPrice(extracted3.GetBooksCount()));
+                }
+                var steppedClassification4 = classification.StepCaseSet(4, out PotterClassification extracted4);
+                if (!steppedClassification4.GetItems().Any(i => i.Count < 0))
+                {
+                    prices.Add(GetBestPrice(steppedClassification4) + GetTrivialSetPrice(extracted4.GetBooksCount()));
+                }
+                var steppedClassification5 = classification.StepCaseSet(5, out PotterClassification extracted5);
+                if (!steppedClassification5.GetItems().Any(i => i.Count < 0))
+                {
+                    prices.Add(GetBestPrice(steppedClassification5) + GetTrivialSetPrice(extracted5.GetBooksCount()));
+                }
+
+                var min = prices.Min();
+                return min;
             }
 
             return GetTrivialSetPrice(classification.GetBooksCount());

@@ -148,7 +148,7 @@ namespace KataPotter.Domain.Tests
         }
 
         [Test]
-        [Ignore("Hay que conseguirlo")]
+        //[Ignore("Hay que conseguirlo")]
         public void BeBestDiscountedForShoppingCartWithEdgeCase001()
         {
             var potterClassifier = new PotterClassifier();
@@ -179,7 +179,7 @@ namespace KataPotter.Domain.Tests
         }
 
         [Test]
-        [Ignore("Hay que conseguirlo")]
+        //[Ignore("Hay que conseguirlo")]
         public void BeBestDiscountedForShoppingCartWithEdgeCase002()
         {
             var potterClassifier = new PotterClassifier();

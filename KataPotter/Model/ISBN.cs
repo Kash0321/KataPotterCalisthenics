@@ -27,6 +27,11 @@ namespace KataPotter.Model
             return 1553653001 + EqualityComparer<string>.Default.GetHashCode(isbn);
         }
 
+        public override string ToString()
+        {
+            return isbn;
+        }
+
         public static bool operator ==(ISBN a, ISBN b)
         {
             if (a is null && b is null) return true;

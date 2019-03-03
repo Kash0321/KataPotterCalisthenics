@@ -15,5 +15,10 @@
         {
             Count += increment;
         }
+
+        public override string ToString()
+        {
+            return $"ISBN: {ISBN}, Count: {Count}";
+        }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace KataPotter.Model
 {
-    public class Money : IEquatable<Money>
+    public class Money : IEquatable<Money>, IComparable<Money>
     {
         readonly decimal amount;
 
@@ -62,6 +62,16 @@ namespace KataPotter.Model
         public override int GetHashCode()
         {
             return -1658239311 + amount.GetHashCode();
+        }
+
+        public int CompareTo(Money other)
+        {
+            if (other == null) return 1;
+            if (this == other) return 0;
+            if (amount > other.amount) return 1;
+            if (amount < other.amount) return -1;
+
+            return 1;
         }
     }
 }

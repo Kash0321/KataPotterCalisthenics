@@ -41,7 +41,38 @@ namespace KataPotter.Model
             return classification.Sum(i => i.Count);
         }
 
-        public PotterClassification StepCaseSet(out PotterClassification extracted)
+        private List<ClassificationItem> CopyClassification(List<ClassificationItem> classification)
+        {
+            var result = new List<ClassificationItem>();
+
+            foreach (var item in classification)
+            {
+                result.Add(new ClassificationItem(item.ISBN.ToString(), item.Count));
+            }
+
+            return result;
+        }
+
+        public PotterClassification StepCaseSet(int pos, out PotterClassification extracted)
+        {
+            var extractedClassificationList = new List<ClassificationItem>()
+            {
+                new ClassificationItem("111"),
+                new ClassificationItem("222"),
+                new ClassificationItem("333"),
+                new ClassificationItem("444"),
+                new ClassificationItem("555")
+            };
+            var resultClassificationList = CopyClassification(classification);
+
+            resultClassificationList[pos - 1].IncrementCount(-1);
+            extractedClassificationList[pos - 1].IncrementCount();
+
+            extracted = new PotterClassification(extractedClassificationList);
+            return new PotterClassification(resultClassificationList);
+        }
+
+            public PotterClassification StepCaseSet(out PotterClassification extracted)
         {
             var extractedClassificationList = new List<ClassificationItem>()
             {
