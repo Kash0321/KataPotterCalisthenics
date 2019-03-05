@@ -10,20 +10,22 @@ namespace KataPotter.Domain
         readonly List<ISBN> potterISBNs;
         readonly PotterClassification classification;
 
+        Dictionary<string, Money> PriceMemoryCache { get; set; } = new Dictionary<string, Money>();
+
         public PotterClassifier()
         {
             potterISBNs = new List<ISBN>() { new ISBN("111"), new ISBN("222"), new ISBN("333"), new ISBN("444"), new ISBN("555") };
             classification = new PotterClassification();
         }
 
-        public bool AddItem(Book book)
+        public bool AddBook(Book book)
         {
             if (!IsPotterBook(book))
             {
                 return false;
             }
 
-            classification.AddItem(book);
+            classification.AddBook(book);
             return true;
         }
 
@@ -34,42 +36,41 @@ namespace KataPotter.Domain
 
         Money GetBestPrice(PotterClassification classification)
         {
-            Money result = Money.Zero();
-            if (classification.GetItems().Any(i => i.Count > 1))
+            if (PriceMemoryCache.ContainsKey(classification.GetKey()))
             {
-
-                var prices = new List<Money>();
-                var steppedClassification1 = classification.StepCaseSet(1, out PotterClassification extracted1);
-                if (!steppedClassification1.GetItems().Any(i => i.Count < 0))
-                {
-                    prices.Add(GetBestPrice(steppedClassification1) + GetTrivialSetPrice(extracted1.GetBooksCount()));
-                }
-                var steppedClassification2 = classification.StepCaseSet(2, out PotterClassification extracted2);
-                if (!steppedClassification2.GetItems().Any(i => i.Count < 0))
-                {
-                    prices.Add(GetBestPrice(steppedClassification2) + GetTrivialSetPrice(extracted2.GetBooksCount()));
-                }
-                var steppedClassification3 = classification.StepCaseSet(3, out PotterClassification extracted3);
-                if (!steppedClassification3.GetItems().Any(i => i.Count < 0))
-                {
-                    prices.Add(GetBestPrice(steppedClassification3) + GetTrivialSetPrice(extracted3.GetBooksCount()));
-                }
-                var steppedClassification4 = classification.StepCaseSet(4, out PotterClassification extracted4);
-                if (!steppedClassification4.GetItems().Any(i => i.Count < 0))
-                {
-                    prices.Add(GetBestPrice(steppedClassification4) + GetTrivialSetPrice(extracted4.GetBooksCount()));
-                }
-                var steppedClassification5 = classification.StepCaseSet(5, out PotterClassification extracted5);
-                if (!steppedClassification5.GetItems().Any(i => i.Count < 0))
-                {
-                    prices.Add(GetBestPrice(steppedClassification5) + GetTrivialSetPrice(extracted5.GetBooksCount()));
-                }
-
-                var min = prices.Min();
-                return min;
+                return PriceMemoryCache[classification.GetKey()];
             }
 
-            return GetTrivialSetPrice(classification.GetBooksCount());
+            if (classification.HasSomeBookMoreThanOnce())
+            {
+                var bestPrice = GetNonTrivialSetBestPrice(classification);
+                PriceMemoryCache.Add(classification.GetKey(), bestPrice);
+                return bestPrice;
+            }
+
+            var price = GetTrivialSetPrice(classification.GetBooksCount());
+            PriceMemoryCache.Add(classification.GetKey(), price);
+            return price;
+        }
+
+        Money GetNonTrivialSetBestPrice(PotterClassification classification)
+        {
+            var prices = new List<Money>();
+
+            for (int i = 1; i <= 5; i++)
+            {
+                var steppedClassification = classification.StepCaseSet(i, out PotterClassification extractedClassification);
+                if (!steppedClassification.HasNegativeCounts())
+                {
+                    var steppedSetBestPrice = GetBestPrice(steppedClassification);
+                    var extractedSetPrice = GetTrivialSetPrice(extractedClassification.GetBooksCount());
+                    prices.Add(steppedSetBestPrice + extractedSetPrice);
+                }
+            }
+
+            var bestPrice = prices.Min();
+
+            return bestPrice;
         }
 
         Money GetTrivialSetPrice(int books)

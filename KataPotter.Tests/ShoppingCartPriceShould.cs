@@ -148,7 +148,29 @@ namespace KataPotter.Domain.Tests
         }
 
         [Test]
-        //[Ignore("Hay que conseguirlo")]
+        public void BeBestDiscountedForShoppingCartWithEdgeCase000()
+        {
+            var potterClassifier = new PotterClassifier();
+            var shoppingCart = new ShoppingCart(new List<IClassifier> { potterClassifier });
+
+            // 2 del 1
+            shoppingCart.AddItem(new Book("111"));
+            shoppingCart.AddItem(new Book("111"));
+
+            // 2 del 2
+            shoppingCart.AddItem(new Book("222"));
+            shoppingCart.AddItem(new Book("222"));
+
+            // 2 del 3
+            shoppingCart.AddItem(new Book("333"));
+            shoppingCart.AddItem(new Book("333"));
+
+            var resultPrice = shoppingCart.GetCartTotalPrice();
+
+            resultPrice.Should().Be(new Money(2 * (UNIT_PRICE * 3 * 0.9m)));
+        }
+
+        [Test]
         public void BeBestDiscountedForShoppingCartWithEdgeCase001()
         {
             var potterClassifier = new PotterClassifier();
@@ -179,7 +201,6 @@ namespace KataPotter.Domain.Tests
         }
 
         [Test]
-        //[Ignore("Hay que conseguirlo")]
         public void BeBestDiscountedForShoppingCartWithEdgeCase002()
         {
             var potterClassifier = new PotterClassifier();

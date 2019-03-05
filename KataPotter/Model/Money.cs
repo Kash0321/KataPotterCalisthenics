@@ -18,11 +18,24 @@ namespace KataPotter.Model
 
         public static Money operator +(Money a, Money b)
         {
+            if (a is null) throw new ArgumentNullException(nameof(a));
+            if (b is null) throw new ArgumentNullException(nameof(b));
+
             return new Money(a.amount + b.amount);
+        }
+
+        public static Money operator -(Money a, Money b)
+        {
+            if (a is null) throw new ArgumentNullException(nameof(a));
+            if (b is null) throw new ArgumentNullException(nameof(b));
+
+            return new Money(a.amount - b.amount);
         }
 
         public static Money operator *(Money a, int b)
         {
+            if (a is null) throw new ArgumentNullException(nameof(a));
+
             return new Money(a.amount * b);
         }
 
@@ -42,6 +55,38 @@ namespace KataPotter.Model
             if (!(a is null) && b is null) return true;
 
             return a.amount != b.amount;
+        }
+
+        public static bool operator >(Money a, Money b)
+        {
+            if (a is null) throw new ArgumentNullException(nameof(a));
+            if (b is null) throw new ArgumentNullException(nameof(b));
+
+            return a.amount > b.amount;
+        }
+
+        public static bool operator <(Money a, Money b)
+        {
+            if (a is null) throw new ArgumentNullException(nameof(a));
+            if (b is null) throw new ArgumentNullException(nameof(b));
+
+            return a.amount < b.amount;
+        }
+
+        public static bool operator >=(Money a, Money b)
+        {
+            if (a is null) throw new ArgumentNullException(nameof(a));
+            if (b is null) throw new ArgumentNullException(nameof(b));
+
+            return a.amount >= b.amount;
+        }
+
+        public static bool operator <=(Money a, Money b)
+        {
+            if (a is null) throw new ArgumentNullException(nameof(a));
+            if (b is null) throw new ArgumentNullException(nameof(b));
+
+            return a.amount <= b.amount;
         }
 
         public Money ApplyDiscount(decimal discount)
@@ -68,10 +113,15 @@ namespace KataPotter.Model
         {
             if (other == null) return 1;
             if (this == other) return 0;
-            if (amount > other.amount) return 1;
-            if (amount < other.amount) return -1;
+            if (this > other) return 1;
+            if (this < other) return -1;
 
             return 1;
+        }
+
+        public override string ToString()
+        {
+            return amount.ToString();
         }
     }
 }

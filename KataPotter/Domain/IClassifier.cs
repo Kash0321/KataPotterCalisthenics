@@ -4,7 +4,7 @@ namespace KataPotter.Domain
 {
     public interface IClassifier
     {
-        bool AddItem(Book book);
+        bool AddBook(Book book);
 
         Money GetBestPrice();
     }

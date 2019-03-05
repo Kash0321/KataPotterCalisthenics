@@ -1,12 +1,25 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text;
 
 namespace KataPotter.Model
 {
     internal class PotterClassification
     {
         List<ClassificationItem> classification;
+
+        List<ClassificationItem> GetCopy()
+        {
+            var result = new List<ClassificationItem>();
+
+            foreach (var item in classification)
+            {
+                result.Add(new ClassificationItem(item.ISBN.ToString(), item.Count));
+            }
+
+            return result;
+        }
 
         public PotterClassification()
         {
@@ -25,15 +38,20 @@ namespace KataPotter.Model
             this.classification = classification;
         }
 
-        public void AddItem(Book book)
+        public void AddBook(Book book)
         {
             var item = classification.Where(citem => book.MatchBy(citem.ISBN)).First();
             item.IncrementCount();
         }
 
-        public IReadOnlyCollection<ClassificationItem> GetItems()
+        public bool HasSomeBookMoreThanOnce()
         {
-            return new ReadOnlyCollection<ClassificationItem>(classification);
+            return classification.Any(i => i.Count > 1);
+        }
+
+        public bool HasNegativeCounts()
+        {
+            return classification.Any(i => i.Count < 0);
         }
 
         public int GetBooksCount()
@@ -41,16 +59,18 @@ namespace KataPotter.Model
             return classification.Sum(i => i.Count);
         }
 
-        private List<ClassificationItem> CopyClassification(List<ClassificationItem> classification)
+        public string GetKey()
         {
-            var result = new List<ClassificationItem>();
+            var result = new StringBuilder();
 
-            foreach (var item in classification)
+            var k = classification.OrderBy(c => c.Count).ToList();
+
+            foreach (var item in k)
             {
-                result.Add(new ClassificationItem(item.ISBN.ToString(), item.Count));
+                result.Append($".{item.Count}");
             }
 
-            return result;
+            return result.ToString();
         }
 
         public PotterClassification StepCaseSet(int pos, out PotterClassification extracted)
@@ -63,7 +83,7 @@ namespace KataPotter.Model
                 new ClassificationItem("444"),
                 new ClassificationItem("555")
             };
-            var resultClassificationList = CopyClassification(classification);
+            var resultClassificationList = GetCopy();
 
             resultClassificationList[pos - 1].IncrementCount(-1);
             extractedClassificationList[pos - 1].IncrementCount();
@@ -72,29 +92,9 @@ namespace KataPotter.Model
             return new PotterClassification(resultClassificationList);
         }
 
-            public PotterClassification StepCaseSet(out PotterClassification extracted)
+        public override string ToString()
         {
-            var extractedClassificationList = new List<ClassificationItem>()
-            {
-                new ClassificationItem("111"),
-                new ClassificationItem("222"),
-                new ClassificationItem("333"),
-                new ClassificationItem("444"),
-                new ClassificationItem("555")
-            };
-
-            for (int i = 0; i < 5; i++)
-            {
-                if (classification[i].Count > 1)
-                {
-                    classification[i].IncrementCount(-1);
-                    extractedClassificationList[i].IncrementCount();
-                }
-            }
-
-            extracted = new PotterClassification(extractedClassificationList);
-
-            return this;
+            return GetKey();
         }
     }
 }

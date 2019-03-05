@@ -24,7 +24,7 @@ namespace KataPotter.Domain
             books.Add(book);
             foreach (var classifier in classifiers)
             {
-                classifier.AddItem(book);
+                classifier.AddBook(book);
             }
         }
 
